@@ -36,13 +36,12 @@ namespace Android.Dialog
         /// create the nested UIViewController that is activated when the user
         /// taps on the element.
         /// </summary>
-        /// <param name="caption">
-        ///  The caption to render.
-        /// </param>
+        /// <param name="caption">The caption to render.</param>
+        /// <param name="createOnSelected">The <see cref="Func{TResult}"/> that creates a view to display when the element selected.</param>
         public RootElement(string caption, Func<RootElement, View> createOnSelected)
             : base(caption, Resource.Layout.dialog_root)
         {
-            this._createOnSelected = createOnSelected;
+            _createOnSelected = createOnSelected;
             Sections = new List<Section>();
         }
 
@@ -178,7 +177,7 @@ namespace Android.Dialog
         /// The index where the section is added <see cref="System.Int32"/>
         /// </param>
         /// <param name="newSections">
-        /// A <see cref="Section[]"/> list of sections to insert
+        /// A collection of <see cref="Section"/> to insert into this instance.
         /// </param>
         /// <remarks>
         ///    This inserts the specified list of sections (a params argument) into the

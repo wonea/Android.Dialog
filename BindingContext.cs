@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
-using Android.Content;
 using Android.Widget;
 
 namespace Android.Dialog
@@ -11,7 +11,7 @@ namespace Android.Dialog
     public class BindingContext : IDisposable
     {
         public RootElement Root;
-        Dictionary<Element, MemberAndInstance> mappings;
+        Dictionary<Element, MemberAndInstance> _mappings;
 
         class MemberAndInstance
         {
@@ -30,7 +30,8 @@ namespace Android.Dialog
             if (fi != null)
                 return fi.GetValue(o);
             var pi = mi as PropertyInfo;
-
+            if (pi == null)
+                return null;
             var getMethod = pi.GetGetMethod();
             return getMethod.Invoke(o, new object[0]);
         }
@@ -44,8 +45,10 @@ namespace Android.Dialog
                 return;
             }
             var pi = mi as PropertyInfo;
+            if (pi == null)
+                return;
             var setMethod = pi.GetSetMethod();
-            setMethod.Invoke(o, new object[] { val });
+            setMethod.Invoke(o, new[] { val });
         }
 
         static string MakeCaption(string name)
@@ -80,7 +83,7 @@ namespace Android.Dialog
         {
             if (mi is FieldInfo)
                 return ((FieldInfo)mi).FieldType;
-            else if (mi is PropertyInfo)
+            if (mi is PropertyInfo)
                 return ((PropertyInfo)mi).PropertyType;
             return null;
         }
@@ -90,7 +93,7 @@ namespace Android.Dialog
             if (o == null)
                 throw new ArgumentNullException("o");
 
-            mappings = new Dictionary<Element, MemberAndInstance>();
+            _mappings = new Dictionary<Element, MemberAndInstance>();
 
             Root = new RootElement(title);
             Populate(callbacks, o, Root);
@@ -179,7 +182,7 @@ namespace Android.Dialog
                         }
                     }
 
-                    string value = (string)GetValue(mi, o);
+                    var value = (string)GetValue(mi, o);
                     if (pa != null)
                         element = new EntryElement(caption, value) { Hint = pa.Placeholder, Password = true };
                     else if (ea != null)
@@ -198,12 +201,11 @@ namespace Android.Dialog
                     }
 
                     if (invoke != null)
-                        ((StringElement)element).Click = invoke;
+                        element.Click = invoke;
                 }
                 else if (mType == typeof(float))
                 {
-                    var floatElement = new FloatElement(null, null, (int)GetValue(mi, o));
-                    floatElement.Caption = caption;
+                    var floatElement = new FloatElement(null, null, (int)GetValue(mi, o)) { Caption = caption, };
                     element = floatElement;
 
                     foreach (object attr in attrs)
@@ -275,7 +277,7 @@ namespace Android.Dialog
                 {
                     element = new ImageElement((ImageView)GetValue(mi, o));
                 }
-                else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(mType))
+                else if (typeof(IEnumerable).IsAssignableFrom(mType))
                 {
                     var csection = new Section();
                     int count = 0;
@@ -287,7 +289,7 @@ namespace Android.Dialog
                         csection.Add(new RadioElement(e.ToString()));
                         count++;
                     }
-                    int selected = (int)GetValue(last_radio_index, o);
+                    var selected = (int)GetValue(last_radio_index, o);
                     if (selected >= count || selected < 0)
                         selected = 0;
                     element = new RootElement(caption, new MemberRadioGroup(null, selected, last_radio_index)) { csection };
@@ -295,13 +297,9 @@ namespace Android.Dialog
                 }
                 else if (typeof(int) == mType)
                 {
-                    foreach (object attr in attrs)
+                    if (attrs.OfType<RadioSelectionAttribute>().Any())
                     {
-                        if (attr is RadioSelectionAttribute)
-                        {
-                            last_radio_index = mi;
-                            break;
-                        }
+                        last_radio_index = mi;
                     }
                 }
                 else
@@ -319,7 +317,7 @@ namespace Android.Dialog
                     continue;
 
                 section.Add(element);
-                mappings[element] = new MemberAndInstance(mi, o);
+                _mappings[element] = new MemberAndInstance(mi, o);
             }
             root.Add(section);
         }
@@ -344,17 +342,17 @@ namespace Android.Dialog
         {
             if (disposing)
             {
-                foreach (var element in mappings.Keys)
+                foreach (var element in _mappings.Keys)
                 {
                     element.Dispose();
                 }
-                mappings = null;
+                _mappings = null;
             }
         }
 
         public void Fetch()
         {
-            foreach (var dk in mappings)
+            foreach (var dk in _mappings)
             {
                 Element element = dk.Key;
                 MemberInfo mi = dk.Value.Member;

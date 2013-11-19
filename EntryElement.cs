@@ -1,6 +1,5 @@
 ﻿using System;
 using Android.Content;
-using Android.Content.Res;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
@@ -18,8 +17,8 @@ namespace Android.Dialog
                 if (_entry != null && _val != value)
                 {
                     _val = value;
-                    if (_entry.Text != _val)
-                        _entry.Text = _val;
+                    if (_entry.Text == _val) return;
+                    _entry.Text = _val;
                     if (Changed != null)
                         Changed(this, EventArgs.Empty);
                 }
@@ -84,7 +83,7 @@ namespace Android.Dialog
         /// <summary>
         /// An action to perform when Enter is hit
         /// </summary>
-        /// <remarks>This is only meant to be set if this is the last field in your RootElement, to allow the Enter button to be used for submitting the form data.<br>
+        /// <remarks>This is only meant to be set if this is the last field in your RootElement, to allow the Enter button to be used for submitting the form data.<br/>
         /// If you want to perform an action when the text changes, consider hooking into Changed instead.</remarks>
         public Action Send { get; set; }
 
@@ -214,27 +213,12 @@ namespace Android.Dialog
 
         #region MonoTouch Dialog Mimicry
 
-        public UIKeyboardType KeyboardType
-        {
-            get { return keyboardType; }
-            set { keyboardType = value; }
-        }
-        private UIKeyboardType keyboardType;
+        public UIKeyboardType KeyboardType { get; set; }
 
-        public UIReturnKeyType ReturnKeyType
-        {
-            get { return returnKeyType; }
-            set { returnKeyType = value; }
-        }
-        private UIReturnKeyType returnKeyType;
+        public UIReturnKeyType ReturnKeyType { get; set; }
 
         // Not used in any way, just there to match MT Dialog api.
-        public UITextFieldViewMode ClearButtonMode
-        {
-            get { return clearButtonMode; }
-            set { clearButtonMode = value; }
-        }
-        private UITextFieldViewMode clearButtonMode;
+        public UITextFieldViewMode ClearButtonMode { get; set; }
 
         #endregion
     }

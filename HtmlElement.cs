@@ -27,7 +27,7 @@ namespace Android.Dialog
 
         void OpenUrl(Context context)
         {
-            Intent intent = new Intent(context, typeof(HtmlActivity));
+            var intent = new Intent(context, typeof(HtmlActivity));
             intent.PutExtra("URL", Url.ToString());
             intent.PutExtra("Title", Caption);
             intent.AddFlags(ActivityFlags.NewTask);
@@ -52,7 +52,7 @@ namespace Android.Dialog
             string url = Intent.GetStringExtra("URL");
             Title = Intent.GetStringExtra("Title");
 
-            WebView webview = new WebView(this);
+            var webview = new WebView(this);
             webview.Settings.JavaScriptEnabled = true;
             webview.Settings.BuiltInZoomControls = true;
             SetContentView(webview);

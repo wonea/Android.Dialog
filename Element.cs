@@ -118,12 +118,7 @@ namespace Android.Dialog
         #region MonoTouch Dialog Mimicry
 
         // Not used in any way, just there to match MT Dialog api.
-        public UITableViewCellAccessory Accessory
-        {
-            get { return accessory; }
-            set { accessory = value; }
-        }
-        private UITableViewCellAccessory accessory;
+        public UITableViewCellAccessory Accessory { get; set; }
 
         #endregion
     }
