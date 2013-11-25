@@ -14,8 +14,8 @@ namespace Android.Dialog
                 value.ValueChanged -= HandleValueChangedEvent;
                 value.ValueChanged += HandleValueChangedEvent;
 
-                if (DialogAdapter == null)
-                    DialogAdapter = new DialogAdapter(Activity, value);
+                if (ListAdapter == null)
+                    ListAdapter = DialogAdapter = new DialogAdapter(Activity, value);
                 else
                     DialogAdapter.Root = value;
 
