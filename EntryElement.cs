@@ -121,6 +121,8 @@ namespace Android.Dialog
                 {
                     _entry.ImeOptions = ImeAction.Go;
                     _entry.SetImeActionLabel("Go", ImeAction.Go);
+                    _entry.EditorAction -= _entry_EditorAction;
+                    _entry.EditorAction += _entry_EditorAction;
                 }
                 else _entry.ImeOptions = ReturnKeyType.ImeActionFromUIReturnKeyType();
 
@@ -133,8 +135,6 @@ namespace Android.Dialog
                 {
                     _entry.RemoveTextChangedListener((ITextWatcher)_entry.Tag);
                     _entry.AddTextChangedListener(this);
-                    if (Send != null)
-                        _entry.EditorAction += _entry_EditorAction;
                 }
 
                 _entry.OnFocusChangeListener = this;
