@@ -14,7 +14,7 @@ the user interface.
 
 Pic of the Sample App ([located here](DialogSampleApp))
 ---------------------
-![Rendering of SampleApp](DialogSampleApp/raw/master/sample.png)
+![Rendering of SampleApp](DialogSampleApp/sample.png)
 
 Supported versions of Android
 ----------------
