@@ -30,8 +30,8 @@ namespace DialogSampleApp
                 {
                     new Section("Test Header", "Test Footer")
                         {
-					new StringElement("Do Something", "Foo"),
-					new ButtonElement("DialogActivity", (object sender, EventArgs e) => this.StartNew() ),
+							new StringElement("Do Something", "Foo"),
+							new ButtonElement("DialogActivity", (object sender, EventArgs e) => this.StartNew() ),
                             new BooleanElement("Push my button", true),
                             new BooleanElement("Push this too", false),
                             new StringElement("Text label", "The Value"),
